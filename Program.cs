@@ -1,52 +1,66 @@
+global using MongoDB.Bson;
+global using MongoDB.Driver;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
-using MongoDB.Bson;
-using MongoDB.Driver;
+using Microsoft.OpenApi.Models;
+using minimal_api;
+
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<MongoClient>(_=> new MongoClient());
-builder.Services.AddSingleton<IMongoDatabase>(
+builder.Services.AddSingleton(_=> new MongoClient());
+builder.Services.AddSingleton(
     provider => provider.GetRequiredService<MongoClient>().GetDatabase("building-apis")
 );
-builder.Services.AddSingleton<IMongoCollection<Company>>(
-    provider => provider.GetRequiredService<IMongoDatabase>().GetCollection<Company>("companies")
-);
+builder.Services.AddSingleton(
+    provider => provider.GetRequiredService<IMongoDatabase>().GetCollection<Company>("companies"));
+builder.Services.AddSingleton(
+    provider => provider.GetRequiredService<IMongoDatabase>().GetCollection<Member>("members"));
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new ObjectIdJsonConverter());
 });
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Company API",
+        Description = "A .net minimal api with MongoDB",
+        Version = "v1"
+    });
+});
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Company API V1");
+});
 
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/companies",GetCompanies);
+app.MapGet("/companies",ApiMethods.GetCompanies);
 
-app.MapPost("/companies", AddCompanies);
+app.MapPost("/companies", ApiMethods.AddCompanies);
 
-app.MapGet("/companies/{companyId}/offices", GetOffices);
+app.MapPut("/companies", ApiMethods.UpdateCompany);
+
+app.MapDelete("/companies/{companyId}", ApiMethods.DeleteCompany);
+
+app.MapGet("/companies/{companyId}/offices", ApiMethods.GetOffices);
+
+app.MapGet("/members", MemberMethods.GetMembers);
+
+app.MapGet("/members/{args}", MemberMethods.GetMembersByFilter);
+
+app.MapPost("/members", MemberMethods.AddMember);
 
 app.Run();
 
-static async Task<IResult> GetCompanies(IMongoCollection<Company> collection){
-    return TypedResults.Ok(await collection.Find(Builders<Company>.Filter.Empty).ToListAsync());
-};
 
-static async Task<IResult> AddCompanies(IMongoCollection<Company> collection, Company company) {
-   company = company with{ Id = ObjectId.Empty };
-    await collection.InsertOneAsync(company);
-    return TypedResults.Ok(company); 
-};
-
-static async Task<IResult> GetOffices(IMongoCollection<Company> collection, ObjectId companyId) {
-    var offices = await collection.Find(
-        Builders<Company>.Filter.Eq(x => x.Id,companyId))
-        .Project(x => x.Offices)
-        .FirstOrDefaultAsync();
-        return TypedResults.Ok(offices);
-    
-};
 
 public class ObjectIdJsonConverter : JsonConverter<ObjectId>
 {
@@ -56,6 +70,3 @@ public class ObjectIdJsonConverter : JsonConverter<ObjectId>
     public override void Write(Utf8JsonWriter writer, ObjectId value, JsonSerializerOptions options)
         => writer.WriteStringValue(value.ToString());
 };
-public record Company(ObjectId Id, string Name, IReadOnlyCollection<Office> Offices);
-public record Office(string Id, Address Address);
-public record Address(string Line1, string Line2, string PostalCode, string Country);

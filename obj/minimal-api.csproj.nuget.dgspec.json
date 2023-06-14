@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\zlatan\\MyCode\\June2023\\minimal-api\\minimal-api.csproj": {}
+    "C:\\Users\\user\\source\\repos\\minimal-api\\minimal-mongo\\minimal-api.csproj": {}
   },
   "projects": {
-    "D:\\zlatan\\MyCode\\June2023\\minimal-api\\minimal-api.csproj": {
+    "C:\\Users\\user\\source\\repos\\minimal-api\\minimal-mongo\\minimal-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\zlatan\\MyCode\\June2023\\minimal-api\\minimal-api.csproj",
+        "projectUniqueName": "C:\\Users\\user\\source\\repos\\minimal-api\\minimal-mongo\\minimal-api.csproj",
         "projectName": "minimal-api",
-        "projectPath": "D:\\zlatan\\MyCode\\June2023\\minimal-api\\minimal-api.csproj",
+        "projectPath": "C:\\Users\\user\\source\\repos\\minimal-api\\minimal-mongo\\minimal-api.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "D:\\zlatan\\MyCode\\June2023\\minimal-api\\obj\\",
+        "outputPath": "C:\\Users\\user\\source\\repos\\minimal-api\\minimal-mongo\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -27,6 +27,7 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.400-preview.23225.8\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -48,6 +49,10 @@
             "MongoDB.Driver": {
               "target": "Package",
               "version": "[2.19.2, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -69,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400-preview.23225.8\\RuntimeIdentifierGraph.json"
         }
       }
     }
